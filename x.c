@@ -59,6 +59,7 @@ static void zoom(const Arg *);
 static void zoomabs(const Arg *);
 static void zoomreset(const Arg *);
 static void ttysend(const Arg *);
+static void switchcolorscheme(const Arg *);
 
 /* config.h for applying patches and the configuration. */
 #include "config.h"
@@ -329,6 +330,17 @@ void
 ttysend(const Arg *arg)
 {
 	ttywrite(arg->s, strlen(arg->s), 1);
+}
+
+void
+switchcolorscheme(const Arg *arg)
+{
+	colorscheme = (colorscheme + 1) % LEN(colorschemes);
+	colorname = colorschemes[colorscheme];
+	xloadcols();
+	cresize(0, 0);
+	redraw();
+	xhints();
 }
 
 int
@@ -2046,11 +2058,18 @@ main(int argc, char *argv[])
 	case 'v':
 		die("%s " VERSION "\n", argv0);
 		break;
+	case 'C':
+		colorscheme = atoi(EARGF(usage()));
+		if (colorscheme >= LEN(colorschemes)) die("no color scheme #%d\n", colorscheme);
+		break;
 	default:
 		usage();
 	} ARGEND;
 
 run:
+
+	colorname = colorschemes[colorscheme];
+
 	if (argc > 0) /* eat all remaining arguments */
 		opt_cmd = argv;
 

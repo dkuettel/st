@@ -94,7 +94,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* Terminal colors (16 first used in escape sequence) */
-static const char *colorname[] = { "#eee8d5", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#073642", "#fdf6e3", "#cb4b16", "#93a1a1", "#839496", "#657b83", "#6c71c4", "#586e75", "#002b36" }; // solarized light
+static const char **colorname;
 
 
 /*
@@ -105,6 +105,23 @@ unsigned int defaultfg = 12;
 unsigned int defaultbg = 8;
 static unsigned int defaultcs = 12;
 static unsigned int defaultrcs = 8;
+
+/* color schemes to switch to */
+static const char *colorschemes[][16] = {
+/*  https://ethanschoonover.com/solarized/
+ *  solarized dark reference (light switches base 0x with base x)
+ *     #14 base  1: optional emphasized content
+ *  fg #12 base  0: body text / default code / primary content
+ *     #10 base 01: comments / secondary content
+ *     #00 base 02: backgrounds highlights
+ *  bg #08 base 03: background
+ *  0:base02    1:red      2:green    3:yellow   4:blue     5:magenta  6:cyan     7:base2    8:base03   9:orange   10:base01  11:base00  12:base0   13:violet  14:base1   15:base3
+ */
+	{"#eee8d5", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#073642", "#fdf6e3", "#cb4b16", "#93a1a1", "#839496", "#657b83", "#6c71c4", "#586e75", "#002b36", }, // solarized light
+	{"#073642", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#eee8d5", "#002b36", "#cb4b16", "#586e75", "#657b83", "#839496", "#6c71c4", "#93a1a1", "#fdf6e3", }, // solarized dark
+	{"#005500", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#073642", "#001100", "#cb4b16", "#007700", "#839496", "#00bb00", "#6c71c4", "#00ff00", "#002b36", }, // dark green retro
+};
+unsigned int colorscheme = 0;
 
 /*
  * Default shape of cursor
@@ -167,6 +184,7 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
 	{ TERMMOD,              XK_V,           clippaste,      {.i =  0} },
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
+	{ TERMMOD, XK_End, switchcolorscheme, {} },
 };
 
 /*

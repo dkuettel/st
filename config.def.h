@@ -121,7 +121,9 @@ static const char *colorschemes[][16] = {
 	{"#073642", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#eee8d5", "#002b36", "#cb4b16", "#586e75", "#657b83", "#839496", "#6c71c4", "#93a1a1", "#fdf6e3", }, // solarized dark
 	{"#005500", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#073642", "#001100", "#cb4b16", "#007700", "#839496", "#00bb00", "#6c71c4", "#00ff00", "#002b36", }, // dark green retro
 };
-unsigned int colorscheme = 0;
+unsigned int colorscheme = UINT_MAX;
+unsigned int daycolorscheme = 0;
+unsigned int nightcolorscheme = 1;
 
 /*
  * Default shape of cursor

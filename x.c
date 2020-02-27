@@ -2068,6 +2068,14 @@ main(int argc, char *argv[])
 
 run:
 
+	if (colorscheme == UINT_MAX) {
+		/* select colorscheme based on time of day */
+		time_t t = time(0);
+		struct tm *tm = localtime(&t);
+		if (tm->tm_hour < 8) colorscheme = nightcolorscheme;
+		else if (tm->tm_hour < 20) colorscheme = daycolorscheme;
+		else colorscheme = nightcolorscheme;
+	}
 	colorname = colorschemes[colorscheme];
 
 	if (argc > 0) /* eat all remaining arguments */

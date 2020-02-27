@@ -60,6 +60,7 @@ static void zoomabs(const Arg *);
 static void zoomreset(const Arg *);
 static void ttysend(const Arg *);
 static void switchcolorscheme(const Arg *);
+static void switchfont(const Arg *);
 
 /* config.h for applying patches and the configuration. */
 #include "config.h"
@@ -338,6 +339,19 @@ switchcolorscheme(const Arg *arg)
 	colorscheme = (colorscheme + 1) % LEN(colorschemes);
 	colorname = colorschemes[colorscheme];
 	xloadcols();
+	cresize(0, 0);
+	redraw();
+	xhints();
+}
+
+void
+switchfont(const Arg *arg)
+{
+	fontindex = (fontindex + arg->i) % LEN(fonts);
+	font = fonts[fontindex];
+	usedfont = font;
+	xunloadfonts();
+	xloadfonts(usedfont, 0);
 	cresize(0, 0);
 	redraw();
 	xhints();
@@ -907,6 +921,7 @@ xloadfont(Font *f, FcPattern *pattern)
 	FcResult result;
 	XGlyphInfo extents;
 	int wantattr, haveattr;
+	FcChar8 *requested_font_family, *matched_font_family;
 
 	/*
 	 * Manually configure instead of calling XftMatchFont
@@ -924,6 +939,14 @@ xloadfont(Font *f, FcPattern *pattern)
 	if (!match) {
 		FcPatternDestroy(configured);
 		return 1;
+	}
+
+	FcPatternGetString(configured, FC_FAMILY, 0, &requested_font_family);
+	FcPatternGetString(match, FC_FAMILY, 0, &matched_font_family);
+	if (strcmp(requested_font_family, matched_font_family) != 0) {
+			FcPatternDestroy(configured);
+			FcPatternDestroy(match);
+			return 1;
 	}
 
 	if (!(f->match = XftFontOpenPattern(xw.dpy, match))) {
@@ -999,12 +1022,8 @@ xloadfonts(char *fontstr, double fontsize)
 				FcResultMatch) {
 			usedfontsize = -1;
 		} else {
-			/*
-			 * Default font size is 12, if none given. This is to
-			 * have a known usedfontsize value.
-			 */
-			FcPatternAddDouble(pattern, FC_PIXEL_SIZE, 12);
-			usedfontsize = 12;
+			FcPatternAddDouble(pattern, FC_SIZE, defaultfontpointsize);
+			usedfontsize = -1;
 		}
 		defaultfontsize = usedfontsize;
 	}
@@ -2067,6 +2086,8 @@ main(int argc, char *argv[])
 	} ARGEND;
 
 run:
+
+	font = fonts[fontindex];
 
 	if (colorscheme == UINT_MAX) {
 		/* select colorscheme based on time of day */

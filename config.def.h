@@ -5,8 +5,33 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Liberation Mono:size=12:antialias=true:autohint=true";
+static char *font;
 static int borderpx = 2;
+
+/* fonts to switch to */
+unsigned int fontindex = 0;
+static double defaultfontpointsize = 15;
+static char *fonts[] = {
+	"Menlo:antialias=true:autohint=true",
+	"Ubuntu Mono:antialias=true:autohint=true",
+	"Hack:antialias=true:autohint=true",
+	"Noto Mono:antialias=true:autohint=true",
+	"Liberation Mono:antialias=true:autohint=true",
+	"Fira Mono:antialias=true:autohint=true",
+	"Share Tech Mono:antialias=true:autohint=true",
+	"C64 Pro Mono:antialias=true:autohint=true",
+	"Monoid:antialias=true:autohint=true",
+	"Monoid Tight:antialias=true:autohint=true",
+	"Source Code Pro:antialias=true:autohint=true",
+};
+/* checked but disliked
+	"Major Mono Display:antialias=true:autohint=true",
+	"Inconsolata:antialias=true:autohint=true",
+	"Exan:antialias=true:autohint=true",
+	"Ubuntu:antialias=true:autohint=true",
+	"Ubuntu Condensed:antialias=true:autohint=true",
+	"FreeMono:antialias=true:autohint=true",
+*/
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -187,6 +212,8 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_V,           clippaste,      {.i =  0} },
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ TERMMOD, XK_End, switchcolorscheme, {} },
+	{ TERMMOD, XK_D, switchfont, {.i = -1} },
+	{ TERMMOD, XK_F, switchfont, {.i = +1} },
 };
 
 /*
